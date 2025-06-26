@@ -16,7 +16,7 @@ class Sertificate(models.Model):
 class Skill(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to=SaveMediaFile.skill_image, blank=True, null=True)
+    image = models.FileField(upload_to=SaveMediaFile.skill_image, blank=True, null=True)
 
     class Meta:
         verbose_name = "Skill"
