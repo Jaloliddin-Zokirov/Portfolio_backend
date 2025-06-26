@@ -31,6 +31,7 @@ class Portfolio(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     features = models.JSONField(blank=True, null=True)
+    techstack = models.JSONField(blank=True, null=True)
     image = models.ImageField(upload_to=SaveMediaFile.portfolio_image, blank=True, null=True)
     github_link = models.URLField(max_length=255, blank=True, null=True)
     in_link = models.URLField(max_length=255, blank=True, null=True)
