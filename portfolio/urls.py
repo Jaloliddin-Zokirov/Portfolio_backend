@@ -11,10 +11,12 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Portfolio API",
         default_version='v1',
+
         description="Portfolio API Swagger Documentation",
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
+    url="https://portfoliobackend-production-79d7.up.railway.app",
 )
 
 urlpatterns = [
