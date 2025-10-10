@@ -2,4 +2,4 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "gunicorn --chdir portfolio portfolio.wsgi:application --log-file -"
+startCommand = "gunicorn --chdir portfolio --bind 0.0.0.0:${PORT:-8080} portfolio.wsgi:application --log-file -"

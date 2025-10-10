@@ -1,1 +1,1 @@
-web: gunicorn --chdir portfolio portfolio.wsgi:application --log-file -
+web: gunicorn --chdir portfolio --bind 0.0.0.0:${PORT:-8000} portfolio.wsgi:application --log-file -
