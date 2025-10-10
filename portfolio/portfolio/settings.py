@@ -10,7 +10,12 @@ SECRET_KEY = env.str("SECRET_KEY", default="django-insecure-)uv2xyqk&vk$%67=k)ya
 
 DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = [env.str("ALLOWED_HOSTS", default="*")]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+
+CSRF_TRUSTED_ORIGINS = env.list(
+    "CSRF_TRUSTED_ORIGINS",
+    default=["https://api.jaloliddindev.uz"],
+)
 
 # Application definition
 INSTALLED_APPS = [
