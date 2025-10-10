@@ -13,8 +13,10 @@ schema_view = get_schema_view(
         default_version='v1',
         description="Portfolio API Swagger Documentation",
     ),
+    url="https://api.jaloliddindev.uz",
     public=True,
     permission_classes=(permissions.AllowAny,),
+    authentication_classes=[],
 )
 
 urlpatterns = [
