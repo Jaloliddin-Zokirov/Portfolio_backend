@@ -81,7 +81,7 @@ DATABASES = {
         "PORT": env.str("POSTGRES_PORT", default="5432"),
         'ATOMIC_REQUESTS': True,
         "OPTIONS": {
-            "sslmode": "require",
+            "sslmode": "disable",
         },
     }
 }
