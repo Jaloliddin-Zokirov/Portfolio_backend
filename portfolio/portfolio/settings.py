@@ -10,12 +10,52 @@ SECRET_KEY = env.str("SECRET_KEY", default="django-insecure-)uv2xyqk&vk$%67=k)ya
 
 DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+def _clean_host(value: str) -> str:
+    """Return a host name without protocol prefixes or trailing paths."""
 
-CSRF_TRUSTED_ORIGINS = env.list(
+    value = value.strip()
+    if not value:
+        return ""
+
+    if value.startswith(("http://", "https://")):
+        value = value.split("://", 1)[1]
+
+    # Remove any trailing path fragments if present (e.g. example.com/foo).
+    value = value.split("/", 1)[0]
+    return value
+
+
+def _normalise_hosts(values: list[str]) -> list[str]:
+    seen: set[str] = set()
+    normalised: list[str] = []
+
+    for value in values:
+        host = _clean_host(value)
+        if host and host not in seen:
+            seen.add(host)
+            normalised.append(host)
+
+    return normalised
+
+
+raw_allowed_hosts = env.list("ALLOWED_HOSTS", default=["*"])
+
+if "*" in raw_allowed_hosts:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = _normalise_hosts(raw_allowed_hosts)
+
+raw_csrf_trusted_origins = env.list(
     "CSRF_TRUSTED_ORIGINS",
     default=["https://api.jaloliddindev.uz"],
 )
+
+CSRF_TRUSTED_ORIGINS = raw_csrf_trusted_origins
+
+if "*" not in ALLOWED_HOSTS:
+    for origin_host in _normalise_hosts(raw_csrf_trusted_origins):
+        if origin_host not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(origin_host)
 
 # Application definition
 INSTALLED_APPS = [
