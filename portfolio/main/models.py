@@ -1,9 +1,15 @@
 from django.db import models
 from .helpers import SaveMediaFile
+from .validators import validate_image_or_svg
 
 
 class Sertificate(models.Model):
-    img = models.ImageField(upload_to=SaveMediaFile.sertificate_image, blank=True, null=True)
+    img = models.FileField(
+        upload_to=SaveMediaFile.sertificate_image,
+        blank=True,
+        null=True,
+        validators=[validate_image_or_svg],
+    )
 
     class Meta:
         verbose_name = "Sertificate"
@@ -16,7 +22,12 @@ class Sertificate(models.Model):
 class Skill(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to=SaveMediaFile.skill_image, blank=True, null=True)
+    image = models.FileField(
+        upload_to=SaveMediaFile.skill_image,
+        blank=True,
+        null=True,
+        validators=[validate_image_or_svg],
+    )
 
     class Meta:
         verbose_name = "Skill"
@@ -31,7 +42,12 @@ class Portfolio(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     features = models.JSONField(blank=True, null=True)
-    image = models.ImageField(upload_to=SaveMediaFile.portfolio_image, blank=True, null=True)
+    image = models.FileField(
+        upload_to=SaveMediaFile.portfolio_image,
+        blank=True,
+        null=True,
+        validators=[validate_image_or_svg],
+    )
     github_link = models.URLField(max_length=255, blank=True, null=True)
     in_link = models.URLField(max_length=255, blank=True, null=True)
     tg_link = models.URLField(max_length=255, blank=True, null=True)
