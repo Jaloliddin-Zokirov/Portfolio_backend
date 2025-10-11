@@ -42,6 +42,7 @@ class Portfolio(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     features = models.JSONField(blank=True, null=True)
+    tech_stack = models.JSONField(blank=True, default=list)
     image = models.FileField(
         upload_to=SaveMediaFile.portfolio_image,
         blank=True,
@@ -59,6 +60,6 @@ class Portfolio(models.Model):
         verbose_name_plural = "Portfolios"  
 
     def __str__(self):
-        return f'{self.id} - {self.title} - {self.description} - {self.features} - {self.github_link} - {self.in_link} - {self.tg_link} - {self.linkedin_link} - {self.link}'
+        return f'{self.id} - {self.title} - {self.description} - {self.features} - {self.tech_stack} - {self.github_link} - {self.in_link} - {self.tg_link} - {self.linkedin_link} - {self.link}'
 
     

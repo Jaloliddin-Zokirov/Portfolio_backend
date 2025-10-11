@@ -15,8 +15,8 @@ class SkillAdmin(admin.ModelAdmin):
 
 @admin.register(Portfolio)
 class PortfolioAdmin(admin.ModelAdmin):     
-    list_display = ('id', 'title', 'description', 'features', 'image', 'github_link', 'in_link', 'tg_link', 'linkedin_link', 'link')
-    search_fields = ('title', 'description', 'features', 'github_link', 'in_link', 'tg_link', 'linkedin_link', 'link')
+    list_display = ('id', 'title', 'description', 'features', 'tech_stack', 'image', 'github_link', 'in_link', 'tg_link', 'linkedin_link', 'link')
+    search_fields = ('title', 'description', 'features', 'tech_stack', 'github_link', 'in_link', 'tg_link', 'linkedin_link', 'link')
     list_filter = ('title',)    
     ordering = ('id',)
     
