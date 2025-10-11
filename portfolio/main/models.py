@@ -42,7 +42,7 @@ class Portfolio(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     features = models.JSONField(blank=True, null=True)
-    tech_stack = models.JSONField(blank=True, default=list)
+    tech_stack = models.JSONField(blank=True, default=list, db_column='techstack')
     image = models.FileField(
         upload_to=SaveMediaFile.portfolio_image,
         blank=True,
