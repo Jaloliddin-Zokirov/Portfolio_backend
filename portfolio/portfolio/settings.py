@@ -38,10 +38,25 @@ def _normalise_hosts(values: list[str]) -> list[str]:
     return normalised
 
 
-raw_allowed_hosts = env.list("ALLOWED_HOSTS", default=["*"])
+raw_allowed_hosts = [
+    "localhost",
+    "127.0.0.1",
+    "jaloliddindev.uz",
+    "www.jaloliddindev.uz",
+    "api.jaloliddindev.uz",
+    "www.api.jaloliddindev.uz",
+]
 
 if "*" in raw_allowed_hosts:
-    ALLOWED_HOSTS = ["*"]
+    ALLOWED_HOSTS = [
+        "localhost",
+        "127.0.0.1",
+        "jaloliddindev.uz",
+        "www.jaloliddindev.uz",
+        "api.jaloliddindev.uz",
+        "www.api.jaloliddindev.uz",
+    ]
+    
 else:
     ALLOWED_HOSTS = _normalise_hosts(raw_allowed_hosts)
 
