@@ -9,6 +9,7 @@ class Sertificate(models.Model):
         blank=True,
         null=True,
         validators=[validate_image_or_svg],
+        max_length=500,
     )
 
     class Meta:
