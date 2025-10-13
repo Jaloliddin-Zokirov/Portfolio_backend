@@ -35,6 +35,9 @@ jobs:
           DEBUG: False
           SECRET_KEY: dummy
           DATABASE_URL: sqlite:///db.sqlite3
+          CLOUDINARY_CLOUD_NAME: durano3ct
+          CLOUDINARY_API_KEY: 396885536564882
+          CLOUDINARY_API_SECRET: -_jnu6PAWc--2UnzYLZaU722FFI
         run: |
           python portfolio/manage.py collectstatic --noinput
           python portfolio/manage.py migrate
