@@ -36,9 +36,9 @@ jobs:
           SECRET_KEY: dummy
           DATABASE_URL: sqlite:///db.sqlite3
         run: |
-          python manage.py collectstatic --noinput
-          python manage.py migrate
-          python manage.py test || echo "⚠️ No tests found or tests failed."
+          python portfolio/manage.py collectstatic --noinput
+          python portfolio/manage.py migrate
+          python portfolio/manage.py test || echo "⚠️ No tests found or tests failed."
 
       # 5️⃣ Lint (optional, agar flake8 yoki black mavjud bo‘lsa)
       - name: Run lint check
