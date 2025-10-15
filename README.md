@@ -1,36 +1,38 @@
-# Portfolio Backend
+# Portfolio Backend API
 
-## Umumiy ma'lumot
-Portfolio Backend — bu shaxsiy portfolioni boshqarish uchun ishlab chiqilgan Django REST API. Loyiha sertifikatlar, ko'nikmalar va bajarilgan loyihalar haqidagi ma'lumotlarni saqlaydi hamda ularni frontend yoki tashqi servislar uchun HTTP orqali beradi. API REST paradigmasiga tayanadi va ruxsatni cheklashsiz (AllowAny) faqat o'qish (GET) amallarini taklif etadi.
+## 1. Umumiy ma'lumot
+Portfolio Backend - bu shaxsiy portfolioni boshqarish uchun ishlab chiqilgan REST API. Backend `Django` va `Django REST Framework` asosida qurilgan bo'lib, sertifikatlar, ko'nikmalar va portfoliodagi loyihalar haqidagi ma'lumotlarni o'qish uchun ommaviy (autentifikatsiyasiz) endpointlarni taqdim etadi. API stateless, faqat `GET` so'rovlarini qo'llab-quvvatlaydi va frontend ilovalar tomonidan to'g'ridan-to'g'ri iste'mol qilinadi.
 
-## Texnologiyalar va bog'liqliklar
-- `Python 3.12+`
-- `Django 5.1.3`
-- `Django REST Framework 3.15.2`
-- `PostgreSQL` (asosiy ma'lumotlar bazasi)
-- `django-environ` — konfiguratsiya boshqaruvi
-- `django-cors-headers` — CORS sozlamalari
-- `drf-yasg` — Swagger/Redoc dokumentatsiyasi
-- `gunicorn` — ishlab chiqarish serveri
+## 2. Arxitektura va modullar
+- `main` ilovasi modellarning, serializerlarning va `ListAPIView` generik klasslari orqali qurilgan endpointlarning markazi hisoblanadi.
+- Media fayllar Cloudinary'da saqlanadi (`django-cloudinary-storage`), fayl nomlari `helpers.SaveMediaFile` orqali UUID bilan ajratiladi.
+- Swagger/Redoc hujjatlari `drf-yasg` yordamida servis qilinadi.
+- `django-cors-headers` CORS siyosatini boshqaradi, sozlamalar `.env` yordamida parametrik.
 
-Barcha asosiy kutubxonalar `requirements.txt` faylida keltirilgan.
+## 3. Texnologiyalar
+- Python 3.12+
+- Django 4.2.25
+- Django REST Framework 3.16.1
+- PostgreSQL (asosiy ma'lumotlar bazasi)
+- Gunicorn + WhiteNoise (ishlab chiqarish serveri va statik fayllarni tarqatish)
+- Qo'shimcha paketlar ro'yxati: `requirements.txt`
 
-## Katalog tuzilmasi
+## 4. Katalog tuzilmasi
 ```
 Portfolio_backend/
-├── portfolio/               # Django manba kodi
-│   ├── manage.py
-│   ├── main/                # Asosiy ilova (sertifikat, skill, portfolio)
-│   └── portfolio/           # Loyihaning global sozlamalari
-├── requirements.txt
-└── Procfile                 # Gunicorn uchun ishga tushirish skripti
+|-- portfolio/
+|   |-- manage.py
+|   |-- main/              # Sertifikat, skill va portfolio API'lari
+|   \-- portfolio/         # Loyihaning global sozlamalari
+|-- requirements.txt
+|-- Procfile
+\-- README.md
 ```
+Statik fayllar `static/`, yig'ilgan fayllar `staticfiles/` va media fayllar `media/` kataloglarida saqlanadi (ishlab chiqarishda Cloudinary URL'lari qaytariladi).
 
-`main` ilovasi barcha API va ma'lumot modellarini o'z ichiga oladi. Statik va media fayllar mos ravishda `static/`, `staticfiles/` va `media/` kataloglariga yoziladi.
-
-## O'rnatish va ishga tushirish
-1. Reponi klonlang va loyihaning ildiz katalogiga o'ting.
-2. Virtual muhit yarating va faollashtiring:
+## 5. Mahalliy ishga tushirish
+1. Repozitoriyani klonlang va katalogga kiring.
+2. Virtual muhit yarating:
    ```bash
    python -m venv venv
    source venv/bin/activate  # Windows: venv\Scripts\activate
@@ -39,140 +41,166 @@ Portfolio_backend/
    ```bash
    pip install -r requirements.txt
    ```
-4. `.env` faylini yarating (quyidagi bo'limga qarang).
-5. Migratsiyalarni ishga tushiring:
+4. `.env` faylini tayyorlang (6-bo'limga qarang).
+5. Migratsiyalarni bajaring:
    ```bash
    python portfolio/manage.py migrate
    ```
-6. Mahalliy serverni yoqing:
+6. Lokal serverni ishga tushiring:
    ```bash
    python portfolio/manage.py runserver
    ```
-   Server odatda `http://127.0.0.1:8000/` manzilida ishlaydi.
+   API manzili: `http://127.0.0.1:8000/main/...`
 
-### Ishlab chiqarish
-Railway yoki o'xshash platformada `Procfile` `gunicorn --chdir portfolio ...` buyrug'i orqali deploy qilinadi. `PORT` muhiti o'zgaruvchisi platforma tomonidan taqdim etiladi.
+## 6. Muhit o'zgaruvchilari
+| O'zgaruvchi             | Tavsif                                        | Standart qiymat |
+|-------------------------|-----------------------------------------------|-----------------|
+| `SECRET_KEY`            | Django maxfiy kaliti                          | test qiymat     |
+| `DEBUG`                 | `True/False`                                  | `True`          |
+| `POSTGRES_DB`           | Ma'lumotlar bazasi nomi                       | `portfolio`     |
+| `POSTGRES_USER`         | Ma'lumotlar bazasi foydalanuvchisi            | `postgres`      |
+| `POSTGRES_PASSWORD`     | Ma'lumotlar bazasi paroli                     | `postgres`      |
+| `POSTGRES_HOST`         | Ma'lumotlar bazasi hosti                      | `localhost`     |
+| `POSTGRES_PORT`         | Ma'lumotlar bazasi porti                      | `5432`          |
+| `CSRF_TRUSTED_ORIGINS`  | Vergul bilan ajratilgan ruxsat etilgan hostlar| `https://api.jaloliddindev.uz` |
+| `CORS_ALLOWED_ORIGINS`  | Frontend domenlari (vergul bilan)             | `http://localhost:3000`, `https://jaloliddindev.uz`, ... |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary hisob nomi                         | -               |
+| `CLOUDINARY_API_KEY`    | Cloudinary API kaliti                         | -               |
+| `CLOUDINARY_API_SECRET` | Cloudinary sir kaliti                         | -               |
 
-## Muhit o'zgaruvchilari (.env)
-| O'zgaruvchi             | Tavsif                                      | Standart |
-|-------------------------|---------------------------------------------|----------|
-| `SECRET_KEY`            | Django maxfiy kaliti                        | demo qiymat |
-| `DEBUG`                 | `True/False` — debug rejimi                 | `True` |
-| `POSTGRES_DB`           | Ma'lumotlar bazasi nomi                     | `portfolio` |
-| `POSTGRES_USER`         | Ma'lumotlar bazasi foydalanuvchisi          | `postgres` |
-| `POSTGRES_PASSWORD`     | Ma'lumotlar bazasi paroli                   | `postgres` |
-| `POSTGRES_HOST`         | Ma'lumotlar bazasi hosti                    | `localhost` |
-| `POSTGRES_PORT`         | Ma'lumotlar bazasi porti                    | `5432` |
-| `CSRF_TRUSTED_ORIGINS`  | Vergul bilan ajratilgan ruxsat berilgan hostlar | `https://api.jaloliddindev.uz` |
-| `CORS_ALLOWED_ORIGINS`  | Vergul bilan ajratilgan frontend manzillar  | `http://localhost:3000`, `https://jaloliddindev.uz`, ... |
+`django-environ` bu o'zgaruvchilarni o'qiydi. Agar ma'lumotlar bazasiga SSL talab qilinmasa, `DATABASES["default"]["OPTIONS"]["sslmode"]` sozlamasini moslang.
 
-`django-environ` bu qiymatlarni avtomatik o'qiydi. QA yoki ishlab chiqarish davrida SSL talabi (`sslmode=require`) yo'q qilinishi kerak bo'lsa, mos ravishda ma'lumotlar bazasi sozlamalarini moslashtiring.
+## 7. Ma'lumotlar modellari
+### Sertificate (`main.models.Sertificate`)
+| Maydon | Tip | Izoh |
+|--------|-----|------|
+| `id`   | AutoField | Yagona identifikator |
+| `img`  | FileField | Sertifikat rasmi, SVG yoki raster ruxsat etiladi |
 
-## Statik va media fayllar
-- `STATIC_URL = /static/`
-- `MEDIA_URL = /media/`
+### Skill (`main.models.Skill`)
+| Maydon | Tip | Izoh |
+|--------|-----|------|
+| `id`          | AutoField | Yagona identifikator |
+| `title`       | CharField (255) | Ko'nikma nomi |
+| `description` | TextField | Tavsif (markdown qo'llanilmaydi) |
+| `image`       | FileField | Ikona yoki rasm |
 
-Gunicorn + WhiteNoise static fayllarni xizmat qiladi. Media fayllar foydalanuvchi yuklagan fayllar uchun `media/` ichida saqlanadi. Model maydonlari orqali qaytarilgan URL'lar `MEDIA_URL` bilan boshlanadi (masalan, `/media/portfolio_images/<uuid>/<filename>`). Frontend to'liq URL`ni qurish uchun domenni qo'shishi kerak.
+### Portfolio (`main.models.Portfolio`)
+| Maydon | Tip | Izoh |
+|--------|-----|------|
+| `id`            | AutoField | Yagona identifikator |
+| `title`         | CharField (255) | Loyiha nomi |
+| `description`   | TextField | Loyiha haqida batafsil ma'lumot |
+| `features`      | JSONField | Loyiha imkoniyatlari (odatda satrlar ro'yxati) |
+| `tech_stack`    | JSONField | Texnologiyalar ro'yxati (`db_column="techstack"`) |
+| `image`         | FileField | Loyiha rasmi |
+| `github_link`   | URLField | GitHub repozitoriyasi |
+| `in_link`       | URLField | Qo'shimcha havola (masalan, demo) |
+| `tg_link`       | URLField | Telegram profili |
+| `linkedin_link` | URLField | LinkedIn profili |
+| `link`          | URLField | Loyiha sayti |
 
-## API manzillari
-Asosiy prefiks: `http://<HOST>/main/` (masalan, lokalda `http://127.0.0.1:8000/main/`). Barcha endpointlar `GET` so'rovlarini qabul qiladi va ro'yxat ko'rinishida ma'lumot qaytaradi.
+Barcha maydonlarda `blank=True, null=True` qo'llangan, shuning uchun admin panelda to'ldirilmagan qiymatlar xato bermaydi.
 
-### 1. Sertifikatlar
-- **URL:** `GET /main/serticates/`
-- **Tavsif:** Sertifikatlar ro'yxatini qaytaradi.
-- **Namunaviy javob:**
-  ```json
-  [
-    {
-      "id": 1,
-      "img": "http://127.0.0.1:8000/media/sertificate_images/5f8c6f30-9fc9-43d4-8cd7-3297df/example.png"
-    }
-  ]
-  ```
+## 8. API ko'rinishi
+- Bazaviy prefiks: lokalda `http://127.0.0.1:8000/main/`, ishlab chiqarishda `https://api.jaloliddindev.uz/main/`.
+- Javoblar ro'yxat (`list`) ko'rinishida, elementlar `id` bo'yicha o'sish tartibida qaytadi.
+- Javob sarlavha va sarlavhasiz holatda `HTTP 200 OK`.
+- Xato holatlarida DRF standart strukturasidan foydalaniladi (masalan, `{"detail": "Not found."}`).
 
-### 2. Ko'nikmalar (Skills)
-- **URL:** `GET /main/skills/`
-- **Tavsif:** Ko'nikmalar va ularning tavsiflari.
-- **Namunaviy javob:**
-  ```json
-  [
-    {
-      "id": 3,
-      "title": "Backend Development",
-      "description": "Django va FastAPI bilan REST xizmatlari",
-      "image": "http://127.0.0.1:8000/media/skill_images/8a1d8e90-5f51-4e3b-8c53-a930/icon.png"
-    }
-  ]
-  ```
+### 8.1. `GET /main/serticates/`
+- **Tavsif:** Sertifikatlar ro'yxati.
+- **Response 200:** sertifikat obyektlari ro'yxati.
+```json
+[
+  {
+    "id": 1,
+    "img": "https://res.cloudinary.com/<cloud-name>/image/upload/v.../certificate.png"
+  }
+]
+```
 
-### 3. Portfolio loyihalari
-- **URL:** `GET /main/portfolios/`
-- **Tavsif:** Loyiha kartalari, havolalar va asosiy xususiyatlar.
-- **Namunaviy javob:**
-  ```json
-  [
-    {
-      "id": 5,
-      "title": "Portfolio Platformasi",
-      "description": "Frontend va backend integratsiyasi bilan shaxsiy sayit",
-      "features": [
-        "Mahalliy va ishlab chiqarish muhitiga moslashuvchan",
-        "To'liq REST API",
-        "CORS va Swagger integratsiyasi"
-      ],
-      "image": "http://127.0.0.1:8000/media/portfolio_images/3ad9c54d-1ef1-4fc3-8483-6ad0/cover.png",
-      "github_link": "https://github.com/username/portfolio",
-      "in_link": null,
-      "tg_link": "https://t.me/username",
-      "linkedin_link": "https://www.linkedin.com/in/username/",
-      "link": "https://jaloliddindev.uz"
-    }
-  ]
-  ```
+### 8.2. `GET /main/skills/`
+- **Tavsif:** Ko'nikma kartochkalari.
+- **Response 200:**
+```json
+[
+  {
+    "id": 3,
+    "title": "Backend Development",
+    "description": "Django va FastAPI bilan REST xizmatlari",
+    "image": "https://res.cloudinary.com/<cloud-name>/image/upload/v.../skill.png"
+  }
+]
+```
 
-> **Eslatma:** `features` maydoni `models.JSONField` orqali saqlanadi. Amaliyotda bu ko'pincha stringlar ro'yxati yoki obyektlar ro'yxati ko'rinishida bo'ladi. Frontend ushbu ma'lumotni mos ravishda parse qilishi kerak.
+### 8.3. `GET /main/portfolios/`
+- **Tavsif:** Portfolio loyihalari va havolalar.
+- **Response 200:**
+```json
+[
+  {
+    "id": 5,
+    "title": "Portfolio Platformasi",
+    "description": "Frontend va backend integratsiyasi bilan shaxsiy sayt",
+    "features": [
+      "Mahalliy va ishlab chiqarish muhitiga moslashuvchan",
+      "To'liq REST API",
+      "CORS va Swagger integratsiyasi"
+    ],
+    "tech_stack": ["Django", "DRF", "PostgreSQL"],
+    "image": "https://res.cloudinary.com/<cloud-name>/image/upload/v.../cover.png",
+    "github_link": "https://github.com/username/portfolio",
+    "in_link": null,
+    "tg_link": "https://t.me/username",
+    "linkedin_link": "https://www.linkedin.com/in/username/",
+    "link": "https://jaloliddindev.uz"
+  }
+]
+```
 
-## Ma'lumotlar modellari
-- **Sertificate**
-  - `id`: butun son (autoincrement)
-  - `img`: `ImageField`, sertifikat rasmi (ixtiyoriy)
-- **Skill**
-  - `id`: butun son
-  - `title`: 255 belgigacha bo'lgan matn
-  - `description`: matn, batafsil izoh
-  - `image`: `ImageField`, ko'nikma ikonasi
-- **Portfolio**
-  - `id`: butun son
-  - `title`, `description`: loyihaning nomi va izohi
-  - `features`: JSON (masalan, stringlar ro'yxati)
-  - `image`: loyihaning muqova rasmi
-  - `github_link`, `in_link`, `tg_link`, `linkedin_link`, `link`: tashqi havolalar (`URLField`)
+## 9. Serializatsiya va validatsiya
+- Har bir model uchun `ModelSerializer` ishlatiladi (`views.SerticateSerializer`, `SkillSerializer`, `PortfolioSerializer`).
+- Fayl maydonlari `validators.validate_image_or_svg` orqali tekshiriladi:
+  - Kengaytmalar: `.gif`, `.jpg`, `.jpeg`, `.png`, `.svg`, `.webp`
+  - SVG fayllarda `<svg` tegi mavjudligi tekshiriladi.
+  - Raster fayllarda `Pillow` yordamida `Image.verify()` bajariladi.
 
-Model maydonlari `blank=True, null=True` sifatida yaratilgan, shu sababli barcha maydonlar ixtiyoriydir. Admin panel orqali ma'lumot kiritishda ularning bo'sh qoldirilishi xato bermaydi.
+## 10. Swagger va interaktiv hujjat
+- `GET /swagger/` - Swagger UI
+- `GET /swagger<format>/` - JSON/YAML sxema
+- `GET /redoc/` - Redoc UI
+`drf_yasg` token yoki autentifikatsiya talab qilmaydi, `AllowAny` ruxsatlari bilan ishlaydi.
 
-## Swagger va hujjatlar
-- Swagger UI: `GET /swagger/`
-- Swagger JSON: `GET /swagger.json` yoki `GET /swagger.yaml`
-- ReDoc: `GET /redoc/`
+## 11. Xavfsizlik va CORS
+- `REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = AllowAny` - barcha endpointlar o'qishga ochiq.
+- CORS domenlari `.env` orqali boshqariladi.
+- `SECURE_PROXY_SSL_HEADER` va `USE_X_FORWARDED_HOST` sozlamalari reverse-proxy ortidan ishlashni qo'llab-quvvatlaydi.
+- Agar kelajakda autentifikatsiya qo'shilsa, `rest_framework_simplejwt` allaqachon talabnomada mavjud.
 
-Swagger sahifasi `drf-yasg` yordamida avtomatik generatsiya qilinadi va API ni test qilish hamda client kutubxonalarga eksport qilishni osonlashtiradi.
+## 12. Admin va ma'lumot bilan ishlash
+- Admin panel: `/admin/`
+- `SertificateAdmin`, `SkillAdmin`, `PortfolioAdmin` orqali filtr, qidiruv va tartiblash mavjud.
+- Fayl maydonlari Cloudinary URL'larini qaytaradi, shu sababli admin formasi orqali yuklangan fayllar darhol tashqi CDN'da saqlanadi.
 
-## Xavfsizlik va CORS
-- `CORS_ALLOWED_ORIGINS` orqali frontend domenlari belgilangan.
-- Agar `*` ko'rsatilsa, `CORS_ALLOW_ALL_ORIGINS = True` bo'ladi.
-- `CSRF_TRUSTED_ORIGINS` orqali foydalanuvchi interfeysi domenlari qo'shiladi.
-- REST API hozircha autentifikatsiya talab qilmaydi (`AllowAny`). Kelajakda `rest_framework_simplejwt` kutubxonasi yordamida JWT autentifikatsiyasini qo'shish mumkin (kutubxona `requirements.txt` da mavjud).
+## 13. Deploy bo'yicha ko'rsatmalar
+1. PostgreSQL instansiyasini tayyorlang va `.env` ga ulanish ma'lumotlarini yozing.
+2. `python portfolio/manage.py migrate` va zarur bo'lsa `createsuperuser`.
+3. Statik fayllarni yig'ing:
+   ```bash
+   python portfolio/manage.py collectstatic --noinput
+   ```
+4. Gunicorn orqali ishga tushiring (`Procfile`):  
+   `web: gunicorn --chdir portfolio portfolio.wsgi:application`
+5. Reverse proxy (Nginx) yoki Platform-as-a-Service SSL ni boshqaradi.
 
-## Test va keyingi qadamlarga oid eslatmalar
-- `main/tests.py` hozir bo'sh; API uchun DRF testlarini qo'shish tavsiya etiladi.
-- Media fayllarini boshqarish uchun CDN yoki bulut (masalan, S3) integratsiyasi `django-storages` orqali amalga oshirilishi mumkin.
-- CI/CD jarayonida migratsiyalarni avtomatik ishga tushirish va `collectstatic` buyrug'ini qo'shish lozim.
+## 14. Test va keyingi qadamlarga tavsiyalar
+- `main/tests.py` hozircha bo'sh, DRF API testlarini qo'shish tavsiya etiladi.
+- CI/CD pipeline'da migratsiyalar va `collectstatic` avtomatlashtirilsin.
+- CORS va CSRF sozlamalarini ishlab chiqarish domenlariga moslashtirib, `DEBUG=False` rejimida sinovdan o'tkazing.
+- Kelajakda:
+  - JWT autentifikatsiyasini (Simple JWT) faollashtirish
+  - Ma'lumotlarni POST/PUT orqali boshqarish uchun qo'shimcha endpointlar
+  - Throttling va caching qatlamini joriy qilish
 
-## Deploy bo'yicha tezkor ro'yxat
-- Ma'lumotlar bazasi uchun PostgreSQL instansiyasini tayyorlash (`PORT`, `HOST`, `USER`, `PASSWORD`).
-- Muhit o'zgaruvchilarini platformaga kiritish.
-- `python manage.py migrate` va zarur bo'lsa `createsuperuser`.
-- Statik fayllarni yig'ish: `python manage.py collectstatic --noinput`.
-- `gunicorn --chdir portfolio portfolio.wsgi:application` buyrug'i orqali servisni ishga tushirish.
-
-Shu bilan backend API to'liq ishlashga tayyor bo'ladi va frontend tomonidan bemalol iste'mol qilinadi.
+Portfolio Backend shu holatda frontend ilovalar uchun to'liq o'qish rejimida xizmat ko'rsatadi va yangi funksionallik qo'shishga tayyor.
